@@ -62,3 +62,15 @@ export async function GET(request: NextRequest) {
 export async function PUT(request: NextRequest) {
     return handleRequest(request);
 }
+
+export async function POST(request: NextRequest) {
+    return handleRequest(request);
+}
+
+export async function DELETE(request: NextRequest) {
+    return handleRequest(request);
+}
+
+export async function PATCH(request: NextRequest) {
+    return handleRequest(request);
+}

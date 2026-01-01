@@ -5,18 +5,19 @@ import { ProxyNode } from './ProxyNode';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown, Zap } from 'lucide-react';
 import { useClashStore } from '@/store/useClashStore';
+import { LatencyDots } from './LatencyDots';
 
 interface ProxyGroupProps {
     name: string;
     type: string;
     now: string;
     proxies: Array<{ name: string; type: string; delay: number }>;
+    isExpanded: boolean;
+    onToggle: () => void;
 }
 
-export function ProxyGroup({ name, type, now, proxies }: ProxyGroupProps) {
-    const { host, port, secret } = useClashStore();
-    const [isExpanded, setIsExpanded] = useState(true);
-
+export function ProxyGroup({ name, type, now, proxies, isExpanded, onToggle }: ProxyGroupProps) {
+    const { host, port, secret, proxySettings } = useClashStore();
     const [current, setCurrent] = useState(now);
 
     useEffect(() => {
@@ -45,32 +46,48 @@ export function ProxyGroup({ name, type, now, proxies }: ProxyGroupProps) {
         }
     };
 
+    const currentProxy = proxies.find(p => p.name === current);
+
+    const getDelayColor = (ms: number) => {
+        if (!ms) return 'text-gray-500';
+        if (ms < 100) return 'text-green-400';
+        if (ms < 300) return 'text-yellow-400';
+        return 'text-red-400';
+    };
+
     return (
         <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="glass-card rounded-2xl p-6 overflow-hidden"
         >
-            <div className="flex justify-between items-center mb-6">
+            <div className="flex justify-between items-center mb-6 cursor-pointer" onClick={onToggle}>
                 <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center border border-purple-500/20 text-purple-400">
                         <Zap className="w-5 h-5" />
                     </div>
                     <div>
-                        <h3 className="text-lg font-bold text-white">{name}</h3>
-                        <div className="flex items-center gap-2 text-sm text-gray-500">
+                        <h3 className="text-lg font-bold text-gray-900 dark:text-white">{name}</h3>
+                        <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-500">
                             <span>{type}</span>
                             <span>•</span>
-                            <span className="text-blue-400 font-mono">{current}</span>
+                            <div className="flex items-center gap-1.5 font-mono">
+                                <span className="text-blue-400 font-mono">{current}</span>
+                                {currentProxy && currentProxy.delay > 0 && (
+                                    <span className={getDelayColor(currentProxy.delay)}>
+                                        ({currentProxy.delay}ms)
+                                    </span>
+                                )}
+                            </div>
                             <span>•</span>
                             <span>{proxies.length} nodes</span>
                         </div>
+                        {!isExpanded && <LatencyDots proxies={proxies} />}
                     </div>
                 </div>
 
                 <button
-                    onClick={() => setIsExpanded(!isExpanded)}
-                    className="p-2 hover:bg-white/5 rounded-lg transition-colors"
+                    className="p-2 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg transition-colors"
                 >
                     <ChevronDown className={`w-5 h-5 text-gray-400 transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`} />
                 </button>
@@ -82,7 +99,10 @@ export function ProxyGroup({ name, type, now, proxies }: ProxyGroupProps) {
                         initial={{ height: 0, opacity: 0 }}
                         animate={{ height: 'auto', opacity: 1 }}
                         exit={{ height: 0, opacity: 0 }}
-                        className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3"
+                        className="grid gap-3 grid-cols-[repeat(auto-fill,minmax(var(--card-min-width,140px),1fr))]"
+                        style={{
+                            '--card-min-width': `${proxySettings?.cardMinWidth || 140}px`
+                        } as React.CSSProperties}
                     >
                         {proxies.map((proxy) => (
                             <ProxyNode

@@ -22,14 +22,14 @@ export function ProxyNode({ name, type, delay, isActive, onClick }: ProxyNodePro
 
     return (
         <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
+            whileHover={{ scale: 1.01 }}
+            whileTap={{ scale: 0.99 }}
             onClick={onClick}
             className={clsx(
-                "relative flex flex-col p-4 rounded-xl border transition-all duration-200 w-full text-left group overflow-hidden",
+                "relative flex flex-col p-4 rounded-xl transition-all duration-200 w-full text-left group overflow-hidden border",
                 isActive
                     ? "bg-blue-600/20 border-blue-500/50 shadow-lg shadow-blue-500/10"
-                    : "bg-white/5 border-white/5 hover:bg-white/10 hover:border-white/10"
+                    : "bg-gray-100 dark:bg-white/5 border-gray-200 dark:border-white/5 hover:bg-gray-200 dark:hover:bg-white/10 hover:border-gray-300 dark:hover:border-white/10"
             )}
         >
             {isActive && (
@@ -41,13 +41,13 @@ export function ProxyNode({ name, type, delay, isActive, onClick }: ProxyNodePro
 
             <div className="flex justify-between items-start w-full relative z-10 mb-2">
                 <span className={clsx(
-                    "text-xs font-bold px-2 py-0.5 rounded uppercase",
-                    isActive ? "bg-blue-500 text-white" : "bg-white/10 text-gray-400"
+                    "text-[10px] font-bold px-1.5 py-0.5 rounded uppercase",
+                    isActive ? "bg-blue-500 text-white" : "bg-gray-200 dark:bg-white/10 text-gray-600 dark:text-gray-400"
                 )}>
                     {type}
                 </span>
                 {delay !== undefined && (
-                    <div className="flex items-center gap-1 text-xs font-mono">
+                    <div className="flex items-center gap-1 text-[10px] font-mono">
                         <span className={getDelayColor(delay)}>{delay}ms</span>
                         <Wifi className={clsx("w-3 h-3", getDelayColor(delay))} />
                     </div>
@@ -56,8 +56,8 @@ export function ProxyNode({ name, type, delay, isActive, onClick }: ProxyNodePro
 
             <div className="relative z-10 w-full">
                 <h4 className={clsx(
-                    "font-medium truncate text-sm mb-1",
-                    isActive ? "text-white" : "text-gray-300 group-hover:text-white"
+                    "font-medium truncate text-sm",
+                    isActive ? "text-blue-600 dark:text-white" : "text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white"
                 )}>
                     {name}
                 </h4>

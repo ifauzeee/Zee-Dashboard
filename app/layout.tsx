@@ -1,33 +1,71 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { Sidebar } from "@/components/layout/Sidebar";
+import { ThemeProvider } from "@/components/providers/ThemeProvider";
+import { NextIntlClientProvider } from 'next-intl';
+import { getMessages, getLocale } from 'next-intl/server';
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#f8fafc' },
+    { media: '(prefers-color-scheme: dark)', color: '#000000' },
+  ],
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+};
 
 export const metadata: Metadata = {
   title: "Zee Dashboard",
-  description: "Premium Clash Dashboard",
+  description: "A modern, beautiful dashboard for Clash/Mihomo proxy client",
+  manifest: "/manifest.json",
+  keywords: ["clash", "mihomo", "dashboard", "proxy", "vpn"],
+  authors: [{ name: "Zee" }],
+  openGraph: {
+    title: "Zee Dashboard",
+    description: "A modern, beautiful dashboard for Clash/Mihomo proxy client",
+    type: "website",
+  },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "ZeeBoard",
+  },
+  icons: {
+    icon: "/icon-192.png",
+    apple: "/apple-touch-icon.png",
+  },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return (
-    <html lang="en" className="dark">
-      <body className="flex h-screen bg-background text-foreground antialiased selection:bg-blue-500/30">
-        <Sidebar />
-        <main className="flex-1 h-full overflow-y-auto overflow-x-hidden relative">
-          <div className="fixed top-0 left-0 w-full h-full pointer-events-none z-[-1] overflow-hidden">
-            <div className="absolute top-[-10%] left-[20%] w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[120px]" />
-            <div className="absolute bottom-[-10%] right-[10%] w-[400px] h-[400px] bg-purple-600/10 rounded-full blur-[100px]" />
-          </div>
+  const locale = await getLocale();
+  const messages = await getMessages();
 
-          <div className="p-6 md:p-8 max-w-7xl mx-auto w-full">
-            {children}
-          </div>
-        </main>
+  return (
+    <html lang={locale} suppressHydrationWarning>
+      <head>
+        <meta name="theme-color" content="#000000" />
+      </head>
+      <body className="flex h-screen bg-background text-foreground antialiased selection:bg-blue-500/30">
+        <NextIntlClientProvider messages={messages}>
+          <ThemeProvider>
+            <Sidebar />
+            <main className="flex-1 h-full overflow-y-auto overflow-x-hidden relative">
+              <div className="fixed top-0 left-0 w-full h-full pointer-events-none z-[-1] overflow-hidden">
+              </div>
+
+              <div className="p-6 md:p-8 max-w-7xl mx-auto w-full">
+                {children}
+              </div>
+            </main>
+          </ThemeProvider>
+        </NextIntlClientProvider>
       </body>
     </html>
   );
 }
-

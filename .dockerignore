@@ -1,0 +1,29 @@
+.dockerignore
+Dockerfile
+docker-compose.yml
+docker/
+.git/
+.github/
+.gitignore
+README.md
+LICENSE
+*.md
+
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build output
+.next/
+out/
+
+# IDE
+.idea/
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log

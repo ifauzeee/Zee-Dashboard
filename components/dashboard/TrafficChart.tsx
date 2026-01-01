@@ -5,6 +5,7 @@ import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { useTraffic } from '@/components/hooks/useTraffic';
+import { useTheme } from '@/components/providers/ThemeProvider';
 
 const formatBytes = (bytes: number) => {
     if (bytes === 0) return '0 B/s';
@@ -17,6 +18,8 @@ const formatBytes = (bytes: number) => {
 export function TrafficChart() {
     const containerRef = useRef(null);
     const { current, history } = useTraffic();
+    const { resolvedTheme } = useTheme();
+    const isDark = resolvedTheme === 'dark';
 
     useGSAP(() => {
         gsap.from(containerRef.current, {
@@ -27,6 +30,9 @@ export function TrafficChart() {
         });
     }, { scope: containerRef });
 
+    const gridColor = isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.05)';
+    const axisColor = isDark ? '#52525b' : '#94a3b8';
+
     return (
         <div
             ref={containerRef}
@@ -34,7 +40,7 @@ export function TrafficChart() {
         >
             <div className="flex justify-between items-center mb-6">
                 <div>
-                    <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
                         Traffic Overview
                         <span className="relative flex h-2 w-2">
                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
@@ -43,28 +49,28 @@ export function TrafficChart() {
                     </h3>
                     <div className="flex gap-4 mt-2">
                         <div className="text-sm">
-                            <span className="text-gray-500 block text-xs">Download</span>
-                            <span className="text-blue-400 font-mono font-bold">
+                            <span className="text-gray-600 dark:text-gray-400 block text-xs">Download</span>
+                            <span className="text-blue-600 dark:text-blue-400 font-mono font-bold">
                                 {formatBytes(current.down)}
                             </span>
                         </div>
                         <div className="text-sm">
-                            <span className="text-gray-500 block text-xs">Upload</span>
-                            <span className="text-purple-400 font-mono font-bold">
+                            <span className="text-gray-600 dark:text-gray-400 block text-xs">Upload</span>
+                            <span className="text-purple-600 dark:text-purple-400 font-mono font-bold">
                                 {formatBytes(current.up)}
                             </span>
                         </div>
                     </div>
                 </div>
 
-                <div className="flex gap-4 text-sm bg-black/20 p-1.5 rounded-lg border border-white/5">
+                <div className="flex gap-4 text-sm bg-gray-100 dark:bg-black/20 p-1.5 rounded-lg border border-gray-200 dark:border-white/5">
                     <div className="flex items-center gap-2 px-2">
                         <div className="w-2.5 h-2.5 rounded-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.5)]" />
-                        <span className="text-gray-300 font-medium">DL</span>
+                        <span className="text-gray-700 dark:text-gray-300 font-medium">DL</span>
                     </div>
-                    <div className="flex items-center gap-2 px-2 border-l border-white/10">
+                    <div className="flex items-center gap-2 px-2 border-l border-gray-300 dark:border-white/10">
                         <div className="w-2.5 h-2.5 rounded-full bg-purple-500 shadow-[0_0_8px_rgba(168,85,247,0.5)]" />
-                        <span className="text-gray-300 font-medium">UL</span>
+                        <span className="text-gray-700 dark:text-gray-300 font-medium">UL</span>
                     </div>
                 </div>
             </div>
@@ -83,17 +89,17 @@ export function TrafficChart() {
                                     <stop offset="95%" stopColor="#a855f7" stopOpacity={0} />
                                 </linearGradient>
                             </defs>
-                            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" vertical={false} />
+                            <CartesianGrid strokeDasharray="3 3" stroke={gridColor} vertical={false} />
                             <XAxis
                                 dataKey="name"
-                                stroke="#52525b"
+                                stroke={axisColor}
                                 fontSize={11}
                                 tickLine={false}
                                 axisLine={false}
                                 tickMargin={10}
                             />
                             <YAxis
-                                stroke="#52525b"
+                                stroke={axisColor}
                                 fontSize={11}
                                 tickLine={false}
                                 axisLine={false}
@@ -103,12 +109,12 @@ export function TrafficChart() {
                                 content={({ active, payload, label }) => {
                                     if (active && payload && payload.length) {
                                         return (
-                                            <div className="bg-zinc-900/90 border border-white/10 backdrop-blur-md p-3 rounded-xl shadow-xl">
-                                                <p className="text-gray-400 text-xs mb-2">{label}</p>
-                                                <p className="text-blue-400 text-sm font-mono">
+                                            <div className="bg-white dark:bg-zinc-900/90 border border-gray-200 dark:border-white/10 backdrop-blur-md p-3 rounded-xl shadow-xl">
+                                                <p className="text-gray-500 dark:text-gray-400 text-xs mb-2">{label}</p>
+                                                <p className="text-blue-600 dark:text-blue-400 text-sm font-mono">
                                                     ↓ {formatBytes(payload[0].value as number)}
                                                 </p>
-                                                <p className="text-purple-400 text-sm font-mono">
+                                                <p className="text-purple-600 dark:text-purple-400 text-sm font-mono">
                                                     ↑ {formatBytes(payload[1].value as number)}
                                                 </p>
                                             </div>

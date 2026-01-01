@@ -9,8 +9,20 @@ interface ClashConfig {
     error: string | null;
 }
 
+interface ProxySettings {
+    sortBy: 'name' | 'delay' | 'original';
+    groupByProvider: boolean;
+    hideUnavailable: boolean;
+    autoDisconnect: boolean;
+    showOutbound: boolean;
+    cardMinWidth: number;
+    hiddenGroups: string[];
+}
+
 interface ClashStore extends ClashConfig {
+    proxySettings: ProxySettings;
     setConfig: (config: Partial<ClashConfig>) => void;
+    setProxySettings: (settings: Partial<ProxySettings>) => void;
     checkConnection: () => Promise<boolean>;
 }
 
@@ -23,7 +35,20 @@ export const useClashStore = create<ClashStore>()(
             isConnected: false,
             error: null,
 
+            proxySettings: {
+                sortBy: 'original',
+                groupByProvider: false,
+                hideUnavailable: false,
+                autoDisconnect: false,
+                showOutbound: false,
+                cardMinWidth: 280,
+                hiddenGroups: []
+            },
+
             setConfig: (newConfig) => set((state) => ({ ...state, ...newConfig, error: null })),
+            setProxySettings: (newSettings) => set((state) => ({
+                proxySettings: { ...state.proxySettings, ...newSettings }
+            })),
 
             checkConnection: async () => {
                 const { host, port, secret } = get();

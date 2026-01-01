@@ -74,11 +74,30 @@ export function useConnections() {
         }
     };
 
+    const closeConnection = async (id: string) => {
+        if (!isConnected || !host || !port) return;
+        try {
+            const target = `http://${host}:${port}/connections/${id}`;
+            const proxyUrl = `/api/proxy?url=${encodeURIComponent(target)}`;
+            const headers: HeadersInit = {};
+            if (secret) headers['Authorization'] = `Bearer ${secret}`;
+
+            await fetch(proxyUrl, {
+                method: 'DELETE',
+                headers
+            });
+            setConnections(prev => prev.filter(c => c.id !== id));
+            setTimeout(fetchConnections, 500);
+        } catch (e) {
+            console.error(`Failed to close connection ${id}`, e);
+        }
+    };
+
     useEffect(() => {
         fetchConnections();
         const interval = setInterval(fetchConnections, 2000);
         return () => clearInterval(interval);
     }, [fetchConnections]);
 
-    return { connections, uploadTotal, downloadTotal, isLoading, closeAllConnections };
+    return { connections, uploadTotal, downloadTotal, isLoading, closeAllConnections, closeConnection };
 }

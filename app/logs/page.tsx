@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Trash2, Search } from 'lucide-react';
+import { Trash2, Search, Copy } from 'lucide-react';
 import { useState, useMemo } from 'react';
 import { useLogs } from '@/components/hooks/useLogs';
 
@@ -25,18 +25,18 @@ export default function LogsPage() {
                     <motion.h1
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
-                        className="text-3xl font-bold text-white"
+                        className="text-3xl font-bold text-gray-900 dark:text-white"
                     >
                         Logs
                     </motion.h1>
-                    <p className="text-gray-400 mt-1">System activity and events</p>
+                    <p className="text-gray-600 dark:text-gray-400 mt-1">System activity and events</p>
                 </div>
 
                 <div className="flex gap-2">
-                    <div className="flex bg-white/5 rounded-lg border border-white/5 p-1">
+                    <div className="flex bg-gray-100 dark:bg-white/5 rounded-lg border border-gray-200 dark:border-white/5 p-1">
                         <button
                             onClick={clearLogs}
-                            className="p-2 hover:bg-white/10 rounded-md text-gray-400 hover:text-white transition-colors"
+                            className="p-2 hover:bg-gray-200 dark:hover:bg-white/10 rounded-md text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
                             title="Clear Logs"
                         >
                             <Trash2 className="w-4 h-4" />
@@ -50,7 +50,7 @@ export default function LogsPage() {
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                             placeholder="Search logs..."
-                            className="bg-white/5 border border-white/10 rounded-lg pl-9 pr-4 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-blue-500 w-64"
+                            className="bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg pl-9 pr-4 py-2 text-sm text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-blue-500 w-64"
                         />
                     </div>
                 </div>
@@ -61,14 +61,14 @@ export default function LogsPage() {
                 animate={{ opacity: 1, y: 0 }}
                 className="glass-card rounded-2xl flex-1 overflow-hidden flex flex-col font-mono text-sm max-h-[600px]"
             >
-                <div className="p-4 border-b border-white/5 flex gap-2 overflow-x-auto">
+                <div className="p-4 border-b border-gray-200 dark:border-white/5 flex gap-2 overflow-x-auto">
                     {['All', 'Info', 'Warning', 'Error', 'Debug'].map(level => (
                         <button
                             key={level}
                             onClick={() => setFilterLevel(level)}
                             className={`px-3 py-1 rounded-full text-xs font-medium border transition-colors ${filterLevel === level
-                                ? 'bg-white/10 border-white/10 text-white'
-                                : 'bg-transparent border-white/5 text-gray-500 hover:text-gray-300'
+                                ? 'bg-gray-200 dark:bg-white/10 border-gray-300 dark:border-white/10 text-gray-900 dark:text-white'
+                                : 'bg-transparent border-gray-200 dark:border-white/5 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'
                                 }`}
                         >
                             {level}
@@ -81,18 +81,25 @@ export default function LogsPage() {
                         <div className="text-gray-600 text-center py-10">No logs to display...</div>
                     ) : (
                         filteredLogs.slice().reverse().map((log) => (
-                            <div key={log.id} className="flex gap-4 hover:bg-white/5 p-1 rounded transition-colors group">
-                                <span className="text-gray-600 select-none min-w-[70px]">{log.time}</span>
-                                <span className={`uppercase text-xs font-bold w-16 text-center rounded px-1 py-0.5 select-none ${log.type === 'info' ? 'bg-blue-500/10 text-blue-400' :
-                                    log.type === 'warning' ? 'bg-yellow-500/10 text-yellow-400' :
-                                        log.type === 'error' ? 'bg-red-500/10 text-red-400' :
-                                            'bg-gray-500/10 text-gray-400'
+                            <div key={log.id} className="relative flex gap-4 hover:bg-gray-100 dark:hover:bg-white/5 p-1 rounded transition-colors group pr-10">
+                                <span className="text-gray-400 dark:text-gray-600 select-none min-w-[70px]">{log.time}</span>
+                                <span className={`uppercase text-xs font-bold w-16 text-center rounded px-1 py-0.5 select-none ${log.type === 'info' ? 'bg-blue-500/10 text-blue-600 dark:text-blue-400' :
+                                    log.type === 'warning' ? 'bg-yellow-500/10 text-yellow-600 dark:text-yellow-400' :
+                                        log.type === 'error' ? 'bg-red-500/10 text-red-600 dark:text-red-400' :
+                                            'bg-gray-500/10 text-gray-500 dark:text-gray-400'
                                     }`}>
                                     {log.type}
                                 </span>
-                                <span className="text-gray-300 group-hover:text-white break-all">
+                                <span className="text-gray-600 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white break-all">
                                     {log.payload}
                                 </span>
+                                <button
+                                    onClick={() => navigator.clipboard.writeText(log.payload)}
+                                    className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 bg-gray-100 dark:bg-white/10 hover:bg-gray-200 dark:hover:bg-white/20 text-gray-400 hover:text-gray-900 dark:hover:text-white rounded-md opacity-0 group-hover:opacity-100 transition-all border border-gray-200 dark:border-white/5"
+                                    title="Copy log"
+                                >
+                                    <Copy className="w-3 h-3" />
+                                </button>
                             </div>
                         ))
                     )}
