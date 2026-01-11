@@ -26,7 +26,7 @@ const features = [
 ];
 
 const techStack = [
-    { name: 'Next.js 16', color: 'bg-gray-900 dark:bg-white dark:text-black text-gray-900 dark:text-white' },
+    { name: 'Next.js 16', color: 'bg-gray-900 text-white dark:bg-white dark:text-black' },
     { name: 'React 19', color: 'bg-blue-500 text-gray-900 dark:text-white' },
     { name: 'TypeScript', color: 'bg-blue-600 text-gray-900 dark:text-white' },
     { name: 'Tailwind CSS 4', color: 'bg-cyan-500 text-gray-900 dark:text-white' },

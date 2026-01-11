@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import {
     LayoutDashboard,
@@ -67,9 +68,13 @@ export function Sidebar() {
                     ref={logoRef}
                     className="flex items-center gap-2 overflow-hidden whitespace-nowrap"
                 >
-                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold shadow-lg shadow-blue-500/20 shrink-0">
-                        Z
-                    </div>
+                    <Image
+                        src="/Clash.png"
+                        alt="Logo"
+                        width={60}
+                        height={60}
+                        className="w-15 h-15 object-contain shrink-0"
+                    />
                     <span className="font-bold text-lg bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-400">
                         ZeeBoard
                     </span>

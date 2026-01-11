@@ -37,7 +37,6 @@ export function useProxyProviders() {
 
             if (data.providers) {
                 let providersList = Object.values(data.providers).map((provider: unknown) => {
-                    // Define a temporary interface for the raw data structure
                     interface RawProxyData {
                         history?: { delay: number }[];
                         [key: string]: unknown;
